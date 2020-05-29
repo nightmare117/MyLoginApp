@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText loginEmail,loginPassword;
     private Button loginButton,loginLink;
     private FirebaseAuth mAuth;
+    private ProgressBar progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +32,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         loginButton=(Button)findViewById(R.id.buttonLogin);
         loginLink=(Button)findViewById(R.id.buttonSignUpLink);
         mAuth = FirebaseAuth.getInstance();
-
+        progressBar=(ProgressBar)findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
         loginButton.setOnClickListener(this);
         loginLink.setOnClickListener(this);
     }
@@ -69,13 +72,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             loginPassword.requestFocus();
             return;
         }
-
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                progressBar.setVisibility(View.GONE);
                 if(task.isSuccessful()){
                     Intent intent = new Intent(getApplicationContext(),afterLoginActivity.class);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
                     startActivity(intent);
                 }
                 else{

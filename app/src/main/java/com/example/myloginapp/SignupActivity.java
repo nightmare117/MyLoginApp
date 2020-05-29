@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,6 +24,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private EditText signupName,signupEmail,signupPassword;
     private Button signup,loginLink;
     private FirebaseAuth mAuth;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +35,13 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         signupPassword=(EditText)findViewById(R.id.editTextSignUpPassword);
         signup=(Button)findViewById(R.id.buttonSignUp);
         loginLink=(Button)findViewById(R.id.buttonLoginLink);
-
+        progressBar=(ProgressBar)findViewById(R.id.progressBar2);
         mAuth=FirebaseAuth.getInstance();
+        progressBar.setVisibility(View.GONE);
 
         signup.setOnClickListener(this);
         loginLink.setOnClickListener(this);
     }
-
     @Override
     public void onClick(View v) {
         if(v.getId()==R.id.buttonLoginLink){
@@ -47,6 +49,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             startActivity(intent);
         }
         else{
+            progressBar.setVisibility(View.VISIBLE);
             userReg();
         }
     }
@@ -74,10 +77,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             signupPassword.requestFocus();
             return;
         }
-
+        progressBar.setVisibility(View.VISIBLE);
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                progressBar.setVisibility(View.GONE);
                 if (task.isSuccessful())
                     Toast.makeText(getApplicationContext(), "Register is Successful!", Toast.LENGTH_SHORT).show();
                 else {
